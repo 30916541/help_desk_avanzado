@@ -392,7 +392,7 @@ $incidencias = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white/90 shrink-0"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
                     <h2 class="text-lg font-bold text-white" style="font-family: 'Outfit', sans-serif;">Editar Ticket</h2>
                 </div>
-                <a href="index.php<?php echo $pagina; ?>" class="text-white/80 hover:text-white transition-colors" aria-label="Cerrar">
+                <a href="index.php<?php echo $pagina ? '?' . substr($pagina, 1) : ''; ?>" class="text-white/80 hover:text-white transition-colors" aria-label="Cerrar">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                 </a>
             </div>
@@ -441,7 +441,7 @@ $incidencias = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                 <div class="flex gap-2.5 pt-2">
                     <button type="submit" class="flex-1 bg-gradient-to-r from-blue-600 to-blue-500 text-white px-5 py-2.5 rounded-lg font-bold hover:from-blue-700 hover:to-blue-600 transition-all duration-200 shadow-sm active:scale-[0.98] cursor-pointer">Guardar Cambios</button>
-                    <a href="index.php<?php echo $pagina; ?>" class="px-5 py-2.5 rounded-lg font-bold no-underline inline-block bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors cursor-pointer dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600">Cancelar</a>
+                    <a href="index.php<?php echo $pagina ? '?' . substr($pagina, 1) : ''; ?>" class="px-5 py-2.5 rounded-lg font-bold no-underline inline-block bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors cursor-pointer dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600">Cancelar</a>
                 </div>
             </form>
         </div>
@@ -521,16 +521,16 @@ $incidencias = $stmt->fetchAll(PDO::FETCH_ASSOC);
             }
         })();
 
-        // Busqueda auto-submit
+        // Busqueda auto-submit (solo si hay cambios significativos)
         (function() {
             var input = document.querySelector('input[name="buscar"]');
             if (input) {
-                var timer;
+                var timer, last = input.value;
                 input.addEventListener('input', function() {
                     clearTimeout(timer);
                     timer = setTimeout(function() {
-                        if (input.value.length >= 0) input.form.submit();
-                    }, 400);
+                        if (input.value !== last) { last = input.value; input.form.submit(); }
+                    }, 500);
                 });
             }
         })();
