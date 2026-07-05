@@ -12,7 +12,7 @@ Sistema web que permite el registro y visualización de incidencias
 
 - `index.php` - Punto de entrada (lógica + formulario + listado de incidencias)
 - `db.php` - Conexión a la base de datos con PDO
-- `style.css` - Estilos de la interfaz
+- Tailwind CSS vía CDN - Estilos de la interfaz
 - `schema.sql` - Script SQL para crear la base de datos y la tabla `incidencias`
 - `.gitignore` - Ignora la carpeta `Planteamiento/`
 
