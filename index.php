@@ -168,7 +168,8 @@ $debug_info = "Total BD: $totalTickets | Mostrando: " . count($incidencias) . " 
             .animate-fade-in, .animate-slide-up, .animate-scale-in, .animate-stagger-in { animation: none !important; }
             *, *::before, *::after { transition-duration: 0.01ms !important; }
         }
-        .stagger-row { opacity: 0; animation: staggerIn 0.4s ease-out forwards; }
+        .stagger-row { animation: staggerIn 0.4s ease-out forwards; }
+        @keyframes staggerIn { 0% { opacity: 0; transform: translateY(8px); } 100% { opacity: 1; transform: translateY(0); } }
         .dark .bg-white\2f \2f \2f \2f \2f \2f { background-color: var(--color-surface); }
     </style>
     <meta name="theme-color" content="#0f172a">
