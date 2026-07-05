@@ -124,7 +124,6 @@ try {
 } catch (Exception $e) {
     die('Error en la consulta: ' . $e->getMessage());
 }
-$debug_info = "Total BD: $totalTickets | Mostrando: " . count($incidencias) . " | Pag: $paginaActual/$totalPaginas | Buscar: " . ($buscar ?: '(vacio)');
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -210,8 +209,6 @@ $debug_info = "Total BD: $totalTickets | Mostrando: " . count($incidencias) . " 
     elseif (isset($_GET['actualizado'])) $toastMensaje = 'Ticket actualizado exitosamente.';
     elseif (isset($_GET['eliminado'])) $toastMensaje = 'Ticket eliminado exitosamente.';
     ?>
-
-    <div class="text-xs text-center mb-4 p-2 bg-yellow-100 text-yellow-800 rounded-lg"><?php echo $debug_info; ?></div>
 
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-8 overflow-hidden animate-fade-in dark:bg-slate-800 dark:border-slate-700">
         <div class="bg-gradient-to-r from-blue-600 to-blue-500 px-5 py-3.5 flex items-center gap-2.5">
