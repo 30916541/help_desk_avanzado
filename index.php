@@ -18,21 +18,6 @@ if (empty($_SESSION['csrf_token'])) {
 }
 $csrf_token = $_SESSION['csrf_token'];
 
-// Export CSV
-if (isset($_GET['exportar'])) {
-    header('Content-Type: text/csv; charset=utf-8');
-    header('Content-Disposition: attachment; filename="tickets_' . date('Y-m-d') . '.csv"');
-    $output = fopen('php://output', 'w');
-    fputs($output, "\xEF\xBB\xBF");
-    fputcsv($output, ['ID', 'Usuario', 'Asunto', 'Mensaje', 'Estatus', 'Fecha']);
-    $stmt = $pdo->query('SELECT * FROM tickets ORDER BY fecha_creacion DESC');
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        fputcsv($output, [$row['id'], $row['usuario'], $row['asunto'], $row['mensaje'], $row['estatus'], $row['fecha_creacion']]);
-    }
-    fclose($output);
-    exit;
-}
-
 // Eliminar
 if (isset($_GET['eliminar'])) {
     $id = (int) $_GET['eliminar'];
@@ -139,6 +124,7 @@ try {
 } catch (Exception $e) {
     die('Error en la consulta: ' . $e->getMessage());
 }
+$debug_info = "Total BD: $totalTickets | Mostrando: " . count($incidencias) . " | Pag: $paginaActual/$totalPaginas | Buscar: " . ($buscar ?: '(vacio)');
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -224,6 +210,8 @@ try {
     elseif (isset($_GET['eliminado'])) $toastMensaje = 'Ticket eliminado exitosamente.';
     ?>
 
+    <div class="text-xs text-center mb-4 p-2 bg-yellow-100 text-yellow-800 rounded-lg"><?php echo $debug_info; ?></div>
+
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-8 overflow-hidden animate-fade-in dark:bg-slate-800 dark:border-slate-700">
         <div class="bg-gradient-to-r from-blue-600 to-blue-500 px-5 py-3.5 flex items-center gap-2.5">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white/90 shrink-0"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg>
@@ -299,10 +287,6 @@ try {
                 <h2 class="text-lg font-bold text-white" style="font-family: 'Outfit', sans-serif;">Incidencias Registradas</h2>
             </div>
             <div class="flex items-center gap-2">
-                <a href="?exportar=1" class="text-xs bg-white/10 text-white px-2.5 py-1.5 rounded-lg hover:bg-white/20 transition-colors no-underline flex items-center gap-1.5" title="Exportar CSV">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    CSV
-                </a>
                 <?php if (!empty($incidencias)): ?>
                 <span class="text-xs bg-white/10 text-white px-2.5 py-1 rounded-full font-medium"><?php echo $totalTickets; ?> registro<?php echo $totalTickets !== 1 ? 's' : ''; ?></span>
                 <?php endif; ?>
