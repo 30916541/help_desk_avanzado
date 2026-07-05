@@ -1,5 +1,10 @@
 <?php
-session_start();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 require 'db.php';
 
 $errores = [];
@@ -108,9 +113,13 @@ $porPagina = 5;
 $paginaActual = isset($_GET['pagina']) ? max(1, (int)$_GET['pagina']) : 1;
 $offset = ($paginaActual - 1) * $porPagina;
 
-$totalStmt = $pdo->prepare("SELECT COUNT(*) FROM tickets $where");
-$totalStmt->execute($params);
-$totalTickets = $totalStmt->fetchColumn();
+try {
+    $totalStmt = $pdo->prepare("SELECT COUNT(*) FROM tickets $where");
+    $totalStmt->execute($params);
+    $totalTickets = $totalStmt->fetchColumn();
+} catch (Exception $e) {
+    die('Error en el conteo: ' . $e->getMessage());
+}
 $totalPaginas = max(1, ceil($totalTickets / $porPagina));
 
 if ($paginaActual > $totalPaginas) {
@@ -118,14 +127,18 @@ if ($paginaActual > $totalPaginas) {
     $offset = ($paginaActual - 1) * $porPagina;
 }
 
-$sql = "SELECT * FROM tickets $where ORDER BY fecha_creacion DESC LIMIT ? OFFSET ?";
-$stmt = $pdo->prepare($sql);
-$i = 1;
-foreach ($params as $p) { $stmt->bindValue($i++, $p); }
-$stmt->bindValue($i++, (int)$porPagina, PDO::PARAM_INT);
-$stmt->bindValue($i++, (int)$offset, PDO::PARAM_INT);
-$stmt->execute();
-$incidencias = $stmt->fetchAll(PDO::FETCH_ASSOC);
+try {
+    $sql = "SELECT * FROM tickets $where ORDER BY fecha_creacion DESC LIMIT ? OFFSET ?";
+    $stmt = $pdo->prepare($sql);
+    $i = 1;
+    foreach ($params as $p) { $stmt->bindValue($i++, $p); }
+    $stmt->bindValue($i++, (int)$porPagina, PDO::PARAM_INT);
+    $stmt->bindValue($i++, (int)$offset, PDO::PARAM_INT);
+    $stmt->execute();
+    $incidencias = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {
+    die('Error en la consulta: ' . $e->getMessage());
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
